@@ -14,22 +14,30 @@
 
 'use strict';
 
-const {assert} = require('chai');
+const assert = require('node:assert/strict');
 const {describe, it} = require('mocha');
 const cp = require('child_process');
-
 const execSync = cmd => cp.execSync(cmd, {encoding: 'utf-8'});
 
+const projectId = process.env.CAIP_PROJECT_ID;
+const location = process.env.LOCATION;
+const model = 'gemini-1.5-flash-001';
+
 describe('Generative AI Stream MultiModal with Video', () => {
-  const project = 'cloud-llm-preview1';
-  const location = 'us-central1';
-  const model = 'gemini-pro-vision';
+  /**
+   * TODO(developer): Uncomment these variables before running the sample.\
+   * (Not necessary if passing values as arguments)
+   */
+  // const projectId = 'YOUR_PROJECT_ID';
+  // const location = 'YOUR_LOCATION';
+  // const model = 'gemini-1.5-flash-001';
 
   it('should create stream multimodal content', async () => {
     const output = execSync(
-      `node ./sendMultiModalPromptWithVideo.js ${project} ${location} ${model}`
+      `node ./sendMultiModalPromptWithVideo.js ${projectId} ${location} ${model}`
     );
+
     // Ensure that the conversation is what we expect for these images
-    assert(output.match(/advertisement/));
+    assert(output.match(/Google Photos/));
   });
 });
