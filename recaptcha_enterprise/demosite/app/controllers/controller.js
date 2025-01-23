@@ -66,49 +66,6 @@ const comment = (req, res) => {
 };
 
 const {createAssessment} = require('../recaptcha/createAssessment');
-// On homepage load, execute reCAPTCHA Enterprise assessment and take action according to the score.
-const onHomepageLoad = async (req, res) => {
-  try {
-    // <!-- ATTENTION: reCAPTCHA Example (Server Part 1/2) Starts -->
-    const recaptchaAction = PROPERTIES.get('recaptcha_action.home');
-    const assessmentResponse = await createAssessment(
-      context.project_id,
-      context.site_key,
-      req.body.token
-    );
-
-    // Check if the token is valid, score is above threshold score and the action equals expected.
-    // Take action based on the result (BAD / NOT_BAD).
-    //
-    // If result.label is NOT_BAD:
-    // Load the home page.
-    // Business logic.
-    //
-    // If result.label is BAD:
-    // Trigger email/ phone verification flow.
-    const result = checkForBadAction(assessmentResponse, recaptchaAction);
-    // <!-- ATTENTION: reCAPTCHA Example (Server Part 1/2) Ends -->
-
-    // Below code is only used to send response to the client for demo purposes.
-    // DO NOT send scores or other assessment response to the client.
-    // Return the response.
-    result.score =
-      assessmentResponse.riskAnalysis && assessmentResponse.riskAnalysis.score
-        ? assessmentResponse.riskAnalysis.score.toFixed(1)
-        : (0.0).toFixed(1);
-
-    res.json({
-      data: result,
-    });
-  } catch (e) {
-    res.json({
-      data: {
-        error_msg: e,
-      },
-    });
-  }
-};
-
 // On signup button click, execute reCAPTCHA Enterprise assessment and take action according to the score.
 const onSignup = async (req, res) => {
   try {
@@ -117,7 +74,8 @@ const onSignup = async (req, res) => {
     const assessmentResponse = await createAssessment(
       context.project_id,
       context.site_key,
-      req.body.token
+      req.body.token,
+      recaptchaAction
     );
 
     // Check if the token is valid, score is above threshold score and the action equals expected.
@@ -162,7 +120,8 @@ const onLogin = async (req, res) => {
     const assessmentResponse = await createAssessment(
       context.project_id,
       context.site_key,
-      req.body.token
+      req.body.token,
+      recaptchaAction
     );
 
     // Check if the token is valid, score is above threshold score and the action equals expected.
@@ -207,7 +166,8 @@ const onStoreCheckout = async (req, res) => {
     const assessmentResponse = await createAssessment(
       context.project_id,
       context.site_key,
-      req.body.token
+      req.body.token,
+      recaptchaAction
     );
 
     // Check if the token is valid, score is above threshold score and the action equals expected.
@@ -251,7 +211,8 @@ const onCommentSubmit = async (req, res) => {
     const assessmentResponse = await createAssessment(
       context.project_id,
       context.site_key,
-      req.body.token
+      req.body.token,
+      recaptchaAction
     );
 
     // Check if the token is valid, score is above threshold score and the action equals expected.
@@ -318,7 +279,6 @@ module.exports = {
   login,
   store,
   comment,
-  onHomepageLoad,
   onSignup,
   onLogin,
   onStoreCheckout,

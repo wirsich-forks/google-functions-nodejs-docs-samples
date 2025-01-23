@@ -17,22 +17,27 @@
 const {assert} = require('chai');
 const {describe, it} = require('mocha');
 const cp = require('child_process');
-
 const execSync = cmd => cp.execSync(cmd, {encoding: 'utf-8'});
 
-describe('Generative AI NonStreaming Content', () => {
-  const project = 'cloud-llm-preview1';
-  const location = 'us-central1';
-  const model = 'gemini-pro';
+const projectId = process.env.CAIP_PROJECT_ID;
+const location = process.env.LOCATION;
+const model = 'gemini-1.5-flash-001';
 
-  it('should create nonstreaming content and begin the conversation the same in each instance', async () => {
+describe('Generative AI NonStreaming Content', () => {
+  /**
+   * TODO(developer): Uncomment these variables before running the sample.\
+   * (Not necessary if passing values as arguments)
+   */
+  // const projectId = 'YOUR_PROJECT_ID';
+  // const location = 'YOUR_LOCATION';
+  // const model = 'gemini-1.5-flash-001';
+
+  it('should create nonstreaming content', async () => {
     const output = execSync(
-      `node ./nonStreamingContent.js ${project} ${location} ${model}`
+      `node ./nonStreamingContent.js ${projectId} ${location} ${model}`
     );
 
-    // Ensure that the beginning of the conversation is consistent
-    assert(output.match(/Prompt:/));
-    assert(output.match(/What is Node.js/));
-    assert(output.match(/Non-Streaming Response Text:/));
+    // Assert that the correct prompt was issued
+    assert(output.match(/Write a story about a magic backpack/));
   });
 });

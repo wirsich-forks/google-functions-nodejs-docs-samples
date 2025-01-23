@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// [START aiplatform_gemini_safety_settings]
+// [START generativeaionvertexai_gemini_safety_settings]
 const {
   VertexAI,
   HarmCategory,
@@ -22,26 +22,29 @@ const {
 /**
  * TODO(developer): Update these variables before running the sample.
  */
-async function setSafetySettings(
-  projectId = 'PROJECT_ID',
-  location = 'us-central1',
-  model = 'gemini-pro'
-) {
+const PROJECT_ID = process.env.CAIP_PROJECT_ID;
+const LOCATION = 'us-central1';
+const MODEL = 'gemini-1.5-flash-001';
+
+async function setSafetySettings() {
   // Initialize Vertex with your Cloud project and location
-  const vertexAI = new VertexAI({project: projectId, location: location});
+  const vertexAI = new VertexAI({project: PROJECT_ID, location: LOCATION});
 
   // Instantiate the model
-  const generativeModel = vertexAI.preview.getGenerativeModel({
-    model: model,
+  const generativeModel = vertexAI.getGenerativeModel({
+    model: MODEL,
     // The following parameters are optional
     // They can also be passed to individual content generation requests
-    safety_settings: [
+    safetySettings: [
       {
         category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
         threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
       },
+      {
+        category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+        threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+      },
     ],
-    generation_config: {max_output_tokens: 256},
   });
 
   const request = {
@@ -59,14 +62,16 @@ async function setSafetySettings(
   for await (const item of responseStream.stream) {
     if (item.candidates[0].finishReason === 'SAFETY') {
       console.log('This response stream terminated due to safety concerns.');
+      break;
     } else {
       process.stdout.write(item.candidates[0].content.parts[0].text);
     }
   }
+  console.log('This response stream terminated due to safety concerns.');
 }
-// [END aiplatform_gemini_safety_settings]
+// [END generativeaionvertexai_gemini_safety_settings]
 
-setSafetySettings(...process.argv.slice(3)).catch(err => {
+setSafetySettings().catch(err => {
   console.error(err.message);
   process.exitCode = 1;
 });

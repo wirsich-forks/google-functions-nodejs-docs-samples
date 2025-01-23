@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// [START aiplatform_gemini_single_turn_video]
+// [START generativeaionvertexai_gemini_single_turn_video]
 const {VertexAI} = require('@google-cloud/vertexai');
 
 /**
@@ -21,12 +21,12 @@ const {VertexAI} = require('@google-cloud/vertexai');
 async function sendMultiModalPromptWithVideo(
   projectId = 'PROJECT_ID',
   location = 'us-central1',
-  model = 'gemini-pro-vision'
+  model = 'gemini-1.5-flash-001'
 ) {
   // Initialize Vertex with your Cloud project and location
   const vertexAI = new VertexAI({project: projectId, location: location});
 
-  const generativeVisionModel = vertexAI.preview.getGenerativeModel({
+  const generativeVisionModel = vertexAI.getGenerativeModel({
     model: model,
   });
 
@@ -60,7 +60,7 @@ async function sendMultiModalPromptWithVideo(
 
   console.log(fullTextResponse);
 }
-// [END aiplatform_gemini_single_turn_video]
+// [END generativeaionvertexai_gemini_single_turn_video]
 
 sendMultiModalPromptWithVideo(...process.argv.slice(2)).catch(err => {
   console.error(err.message);
